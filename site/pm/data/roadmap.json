@@ -45,7 +45,7 @@
     {
       "id": "M4",
       "name": "Public site",
-      "status": "planned",
+      "status": "done",
       "description": "Landing page, public Kanban board and roadmap on transparent-zen.vercel.app, plus a README with a clear disclaimer.",
       "why": "People need to find the project, understand that it is unofficial, and follow progress.",
       "examples": [],

@@ -512,8 +512,15 @@
       "relatedTo": [],
       "owner": "",
       "createdAt": "2026-10-20T10:34:50",
-      "updatedAt": "2026-10-20T10:42:45",
-      "comments": [],
+      "updatedAt": "2026-10-20T10:42:56",
+      "comments": [
+        {
+          "author": "claude-code",
+          "role": "engineer",
+          "date": "2026-10-20T10:42:56",
+          "text": "First production deploy on 2026-10-20. /board and /milestones are served through rewrites to the OpenLead pages."
+        }
+      ],
       "log": [
         {
           "ts": "2026-10-20T10:34:50",
@@ -526,6 +533,12 @@
           "actor": "claude-code",
           "event": "updated",
           "detail": "status: planning -> accepted"
+        },
+        {
+          "ts": "2026-10-20T10:42:56",
+          "actor": "claude-code",
+          "event": "comment",
+          "detail": "First production deploy on 2026-10-20. /board and /milestones are served through…"
         }
       ],
       "sessions": []
