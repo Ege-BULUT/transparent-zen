@@ -28,7 +28,7 @@
       "critical"
     ],
     "taskIdPrefix": "T-",
-    "nextTaskSeq": 22
+    "nextTaskSeq": 23
   },
   "tasks": [
     {
@@ -586,6 +586,31 @@
       "log": [
         {
           "ts": "2026-10-20T10:34:50",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=backlog, urgency=medium"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0022",
+      "title": "Backdrop blur control (clear glass to full blur)",
+      "description": "The blur behind the window is drawn by Windows (Mica or Acrylic) with a fixed strength, so a continuous slider is not possible from the extension. Options: document widget.windows.mica.toplevel-backdrop (0 auto, 1 Mica, 2 Acrylic, 3 Mica Alt), and test whether MicaForEveryone with backdrop None gives a clear glass look.",
+      "status": "backlog",
+      "urgency": "medium",
+      "tag": "research",
+      "milestone": "M3",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T11:45:24",
+      "updatedAt": "2026-10-20T11:45:24",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T11:45:24",
           "actor": "claude-code",
           "event": "created",
           "detail": "status=backlog, urgency=medium"
