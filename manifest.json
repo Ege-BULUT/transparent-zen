@@ -30,8 +30,7 @@
   ],
   "browser_action": {
     "default_popup": "dist/popup/popup.html",
-    "default_title": "Transparent Zen",
-    "default_area": "navbar"
+    "default_title": "Transparent Zen"
   },
   "options_ui": {
     "page": "dist/settings/settings.html",
