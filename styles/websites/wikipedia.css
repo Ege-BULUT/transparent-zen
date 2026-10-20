@@ -1,9 +1,23 @@
+/* Applies to the light and the night Wikipedia theme, so text never ends up white on white */
 @media screen {
-  html.skin-theme-clientpref-night {
-    --background-color-base: none;
-    --background-color-neutral: none;
-    --background-color-neutral-subtle: none;
-    --background-color-interactive-subtle: rgba(0, 0, 0, 0.2);
+  :root {
+    --background-color-base: transparent !important;
+    --background-color-neutral: transparent !important;
+    --background-color-neutral-subtle: transparent !important;
+    --background-color-interactive-subtle: rgba(0, 0, 0, 0.2) !important;
+    --color-base: var(--color-text) !important;
+    --color-emphasized: var(--color-text) !important;
+    --color-subtle: rgb(from var(--color-text) r g b / 0.75) !important;
+  }
+}
+
+.infobox {
+  background: var(--transparent-background) !important;
+  color: var(--color-text) !important;
+
+  & :is(th, .infobox-above, .infobox-title, .infobox-header, .infobox-subheader, .infobox-caption) {
+    background: var(--transparent-background-dark) !important;
+    color: var(--color-text) !important;
   }
 }
 
