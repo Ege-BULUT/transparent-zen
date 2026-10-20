@@ -1,0 +1,4 @@
+pm/scripts
+pm/data
+.env*
+.vercel

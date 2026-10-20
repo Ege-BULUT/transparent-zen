@@ -1,0 +1,70 @@
+{
+  "_meta": {
+    "description": "Roadmap data. Edit via scripts/roadmap_cli.py, not by hand. Run its `render` command afterward to update roadmap.html. Fully local, nothing here is ever pushed anywhere.",
+    "milestoneIdPrefix": "M",
+    "nextMilestoneSeq": 6
+  },
+  "intro": "The plan, sequenced.",
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "Fork and baseline",
+      "status": "done",
+      "description": "Fork the upstream extension, build it locally and confirm it works on Windows 11 with Zen Browser.",
+      "why": "Everything else builds on a fork that is known to work on real hardware.",
+      "examples": [],
+      "chips": [
+        "Windows 11",
+        "Zen 1.23.3b"
+      ]
+    },
+    {
+      "id": "M2",
+      "name": "Theme modes",
+      "status": "next",
+      "description": "Light, Dark and Transparent themes for every website. Transparent has Partial and Full modes and a single transparency slider.",
+      "why": "This is the core goal of the community edition: one generic solution instead of hand-written styles per website.",
+      "examples": [],
+      "chips": [
+        "Generic",
+        "Popup + settings"
+      ]
+    },
+    {
+      "id": "M3",
+      "name": "Zen interface sync",
+      "status": "planned",
+      "description": "The transparency slider also drives the Zen interface (sidebar, toolbar, borders) through a companion userChrome.css.",
+      "why": "A transparent page inside an opaque browser frame breaks the effect. Both have to move together.",
+      "examples": [],
+      "chips": [
+        "userChrome.css",
+        "Theme API bridge"
+      ]
+    },
+    {
+      "id": "M4",
+      "name": "Public site",
+      "status": "planned",
+      "description": "Landing page, public Kanban board and roadmap on transparent-zen.vercel.app, plus a README with a clear disclaimer.",
+      "why": "People need to find the project, understand that it is unofficial, and follow progress.",
+      "examples": [],
+      "chips": [
+        "Vercel",
+        "OpenLead"
+      ]
+    },
+    {
+      "id": "M5",
+      "name": "Release",
+      "status": "planned",
+      "description": "Own add-on id, signed build and a public release that can be installed next to or instead of the official add-on.",
+      "why": "The fork still uses the upstream add-on id, which blocks publishing it.",
+      "examples": [],
+      "chips": []
+    }
+  ],
+  "notes": [
+    "This is a community edition of Transparent Zen. The official project lives at github.com/frostybiscuit/transparent-zen."
+  ]
+}

@@ -1,3 +1,57 @@
+# Transparent Zen Community Edition
+
+<p>
+    <a href="https://transparent-zen.vercel.app/"><img src="https://img.shields.io/badge/Website-transparent--zen.vercel.app-82c7ff"></a>
+    <a href="https://transparent-zen.vercel.app/milestones"><img src="https://img.shields.io/badge/Roadmap-milestones-6e56cf"></a>
+    <a href="https://transparent-zen.vercel.app/board"><img src="https://img.shields.io/badge/Kanban-board-2ea44f"></a>
+    <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+    <a href="https://github.com/Ege-BULUT/transparent-zen/issues"><img src="https://img.shields.io/github/issues/Ege-BULUT/transparent-zen?label=Issues"></a>
+    <a href="https://github.com/frostybiscuit/transparent-zen"><img src="https://img.shields.io/badge/Official%20project-frostybiscuit%2Ftransparent--zen-lightgrey"></a>
+</p>
+
+> [!IMPORTANT]
+> **This is not the official Transparent Zen.** It is an independent community fork maintained by [Ege-BULUT](https://github.com/Ege-BULUT) and is not affiliated with or endorsed by the original author.
+> The official extension by FrostyBiscuit is available on [GitHub](https://github.com/frostybiscuit/transparent-zen) and on [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/transparent-zen/).
+> Please report problems with this edition [here](https://github.com/Ege-BULUT/transparent-zen/issues), not in the official repository.
+
+## What this edition is about
+
+The official project makes websites transparent with hand-written styles for each supported site. This edition takes a different direction: **one generic theme engine that works on every website**, without per-site styles.
+
+- **Light**, **Dark** and **Transparent** themes, selectable from the extension popup.
+- **Partial transparency** keeps text, buttons and images solid while backgrounds become see-through.
+- **Full transparency** fades the whole page, including text, images and controls.
+- **One transparency slider** controls the page and, through a small companion stylesheet ([`zen-mod/userChrome.css`](zen-mod/userChrome.css)), the Zen interface itself: sidebar, toolbar and borders.
+
+Completing the per-site to-do list of the official project is explicitly **not** a goal of this edition.
+
+## Roadmap
+
+| Milestone | Status |
+| --- | --- |
+| Fork and baseline | Done |
+| Theme modes (Light, Dark, Transparent Partial and Full) | In progress |
+| Zen interface sync (companion userChrome.css) | Planned |
+| Public site, board and roadmap | Planned |
+| Own add-on id and signed release | Planned |
+
+The live roadmap and the Kanban board are public and updated at the end of every working day:
+
+- Website: [transparent-zen.vercel.app](https://transparent-zen.vercel.app/)
+- Roadmap: [transparent-zen.vercel.app/milestones](https://transparent-zen.vercel.app/milestones)
+- Kanban board: [transparent-zen.vercel.app/board](https://transparent-zen.vercel.app/board)
+
+## Quick start for this edition
+
+1. In Zen, open `about:config` and set `browser.tabs.allow_transparent_browser`, `widget.transparent-windows` and `widget.windows.mica` to **true**.
+2. Build the extension: `npm ci` and then `npm run build:extension`.
+3. Open `about:debugging#/runtime/this-firefox`, choose **Load Temporary Add-on** and select `manifest.json`.
+4. Optional, for the Zen interface: set `toolkit.legacyUserProfileCustomizations.stylesheets` to **true** and `zen.theme.disable-lightweight` to **false**, copy [`zen-mod/userChrome.css`](zen-mod/userChrome.css) into the `chrome` folder of your Zen profile and restart Zen.
+
+---
+
+<sub>Everything below is the original README of the official project, kept for reference. Links in it point to the official project.</sub>
+
 # Transparent Zen
 
 <p>

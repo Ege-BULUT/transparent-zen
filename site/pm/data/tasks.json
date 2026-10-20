@@ -1,0 +1,560 @@
+{
+  "_meta": {
+    "description": "Task board data. Edit via scripts/tasks_cli.py, not by hand. Run its `render` command afterward to update tasks.html. Fully local, nothing here is ever pushed anywhere.",
+    "columns": [
+      "backlog",
+      "analyze",
+      "planning",
+      "development",
+      "ready_for_review",
+      "testing",
+      "accepted",
+      "rejected"
+    ],
+    "columnLabels": {
+      "backlog": "Backlog",
+      "analyze": "Analyze",
+      "planning": "Planning",
+      "development": "Development",
+      "ready_for_review": "Ready for Review",
+      "testing": "Testing",
+      "accepted": "Accepted (Done)",
+      "rejected": "Rejected"
+    },
+    "urgencyLevels": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ],
+    "taskIdPrefix": "T-",
+    "nextTaskSeq": 22
+  },
+  "tasks": [
+    {
+      "id": "T-0001",
+      "title": "Fork upstream repository to Ege-BULUT/transparent-zen",
+      "description": "",
+      "status": "accepted",
+      "urgency": "high",
+      "tag": "repo",
+      "milestone": "M1",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:47",
+      "updatedAt": "2026-10-20T10:34:47",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:47",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=accepted, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0002",
+      "title": "Verify the original extension on Windows 11",
+      "description": "Installed Zen 1.23.3b, enabled browser.tabs.allow_transparent_browser, widget.transparent-windows and widget.windows.mica. Wikipedia rendered transparent with the Mica backdrop.",
+      "status": "accepted",
+      "urgency": "high",
+      "tag": "qa",
+      "milestone": "M1",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:48",
+      "updatedAt": "2026-10-20T10:34:48",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:48",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=accepted, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0003",
+      "title": "Fix build for content and background scripts",
+      "description": "Shared code turned into ES module chunks that Manifest V2 scripts cannot load, and the content CSS was injected before document.head existed. Both scripts are now built as standalone IIFE bundles.",
+      "status": "accepted",
+      "urgency": "critical",
+      "tag": "build",
+      "milestone": "M1",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:48",
+      "updatedAt": "2026-10-20T10:34:48",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:48",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=accepted, urgency=critical"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0004",
+      "title": "Theme selector: Light, Dark, Transparent",
+      "description": "",
+      "status": "ready_for_review",
+      "urgency": "high",
+      "tag": "popup",
+      "milestone": "M2",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:48",
+      "updatedAt": "2026-10-20T10:34:48",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:48",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=ready_for_review, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0005",
+      "title": "Generic dark and light mode via inversion",
+      "description": "Pages that do not match the chosen scheme get inverted, media is inverted back. Uses the Canvas color when a page has no explicit background.",
+      "status": "ready_for_review",
+      "urgency": "high",
+      "tag": "engine",
+      "milestone": "M2",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:48",
+      "updatedAt": "2026-10-20T10:34:48",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:48",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=ready_for_review, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0006",
+      "title": "Partial transparency with slider",
+      "description": "Backgrounds follow the slider, text, buttons and images stay solid.",
+      "status": "ready_for_review",
+      "urgency": "high",
+      "tag": "engine",
+      "milestone": "M2",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:48",
+      "updatedAt": "2026-10-20T10:34:48",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:48",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=ready_for_review, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0007",
+      "title": "Full transparency with slider",
+      "description": "The whole page fades, including text, images and controls.",
+      "status": "ready_for_review",
+      "urgency": "high",
+      "tag": "engine",
+      "milestone": "M2",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:48",
+      "updatedAt": "2026-10-20T10:34:48",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:48",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=ready_for_review, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0008",
+      "title": "Test live theme switching from the popup",
+      "description": "Mode rendering is verified with fixed defaults. Switching live from the popup still needs a manual pass.",
+      "status": "testing",
+      "urgency": "high",
+      "tag": "qa",
+      "milestone": "M2",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:48",
+      "updatedAt": "2026-10-20T10:34:48",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:48",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=testing, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0009",
+      "title": "Dark mode keeps logos with transparent backgrounds readable",
+      "description": "Example: the Wikipedia wordmark turns black on black because images are inverted back.",
+      "status": "backlog",
+      "urgency": "medium",
+      "tag": "engine",
+      "milestone": "M2",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:49",
+      "updatedAt": "2026-10-20T10:34:49",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:49",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=backlog, urgency=medium"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0010",
+      "title": "Dark mode handles CSS background images",
+      "description": "",
+      "status": "backlog",
+      "urgency": "medium",
+      "tag": "engine",
+      "milestone": "M2",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:49",
+      "updatedAt": "2026-10-20T10:34:49",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:49",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=backlog, urgency=medium"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0011",
+      "title": "Theme API bridge to the Zen interface",
+      "description": "Zen ignores theme colors, so the opacity is encoded in the red channel of the frame color and read back by userChrome.css.",
+      "status": "ready_for_review",
+      "urgency": "high",
+      "tag": "zen-mod",
+      "milestone": "M3",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:49",
+      "updatedAt": "2026-10-20T10:34:49",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:49",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=ready_for_review, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0012",
+      "title": "Companion userChrome.css",
+      "description": "",
+      "status": "ready_for_review",
+      "urgency": "high",
+      "tag": "zen-mod",
+      "milestone": "M3",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:49",
+      "updatedAt": "2026-10-20T10:34:49",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:49",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=ready_for_review, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0013",
+      "title": "One-page install guide for the companion stylesheet",
+      "description": "",
+      "status": "backlog",
+      "urgency": "medium",
+      "tag": "docs",
+      "milestone": "M3",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:49",
+      "updatedAt": "2026-10-20T10:34:49",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:49",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=backlog, urgency=medium"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0014",
+      "title": "Publish the companion stylesheet as a Zen Mod",
+      "description": "",
+      "status": "backlog",
+      "urgency": "low",
+      "tag": "zen-mod",
+      "milestone": "M3",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:49",
+      "updatedAt": "2026-10-20T10:34:49",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:49",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=backlog, urgency=low"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0015",
+      "title": "Document the accent colored title bar strip on Windows",
+      "description": "With Show accent color on title bars enabled, Windows tints the Mica caption area. This is drawn by the OS, not by Zen.",
+      "status": "backlog",
+      "urgency": "low",
+      "tag": "docs",
+      "milestone": "M3",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:49",
+      "updatedAt": "2026-10-20T10:34:49",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:49",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=backlog, urgency=low"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0016",
+      "title": "Landing page",
+      "description": "",
+      "status": "development",
+      "urgency": "high",
+      "tag": "site",
+      "milestone": "M4",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:50",
+      "updatedAt": "2026-10-20T10:34:50",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:50",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=development, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0017",
+      "title": "Public board and milestones pages",
+      "description": "",
+      "status": "development",
+      "urgency": "high",
+      "tag": "site",
+      "milestone": "M4",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:50",
+      "updatedAt": "2026-10-20T10:34:50",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:50",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=development, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0018",
+      "title": "README disclaimer and roadmap",
+      "description": "",
+      "status": "development",
+      "urgency": "high",
+      "tag": "docs",
+      "milestone": "M4",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:50",
+      "updatedAt": "2026-10-20T10:34:50",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:50",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=development, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0019",
+      "title": "Deploy to transparent-zen.vercel.app",
+      "description": "",
+      "status": "planning",
+      "urgency": "high",
+      "tag": "site",
+      "milestone": "M4",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:50",
+      "updatedAt": "2026-10-20T10:34:50",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:50",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=planning, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0020",
+      "title": "Own add-on id and metadata",
+      "description": "",
+      "status": "backlog",
+      "urgency": "high",
+      "tag": "release",
+      "milestone": "M5",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:50",
+      "updatedAt": "2026-10-20T10:34:50",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:50",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=backlog, urgency=high"
+        }
+      ],
+      "sessions": []
+    },
+    {
+      "id": "T-0021",
+      "title": "Signed build and GitHub release",
+      "description": "",
+      "status": "backlog",
+      "urgency": "medium",
+      "tag": "release",
+      "milestone": "M5",
+      "refs": [],
+      "blockedBy": [],
+      "relatedTo": [],
+      "owner": "",
+      "createdAt": "2026-10-20T10:34:50",
+      "updatedAt": "2026-10-20T10:34:50",
+      "comments": [],
+      "log": [
+        {
+          "ts": "2026-10-20T10:34:50",
+          "actor": "claude-code",
+          "event": "created",
+          "detail": "status=backlog, urgency=medium"
+        }
+      ],
+      "sessions": []
+    }
+  ]
+}

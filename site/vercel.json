@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/board", "destination": "/pm/tasks.html" },
+    { "source": "/milestones", "destination": "/pm/roadmap.html" },
+    { "source": "/memory", "destination": "/pm/memory.html" },
+    { "source": "/findings", "destination": "/pm/analysis.html" },
+    { "source": "/:page(tasks|roadmap|memory|analysis).html", "destination": "/pm/:page.html" },
+    { "source": "/attachments/:path*", "destination": "/pm/attachments/:path*" }
+  ]
+}
