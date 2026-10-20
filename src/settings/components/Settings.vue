@@ -5,8 +5,9 @@ import { computed, nextTick, onMounted, ref, toRaw, useTemplateRef, watch } from
 import { Codemirror } from "vue-codemirror";
 import { ColorPicker } from "vue3-colorpicker";
 import type { Browser } from "webextension-polyfill-ts";
-import { DEFAULT_SETTINGS, GITHUB_ENDPOINTS, THEME_MODES } from "../../shared/Constants";
+import { DEFAULT_SETTINGS, GITHUB_ENDPOINTS, THEME_MODES, WINDOW_BACKDROPS } from "../../shared/Constants";
 import { getValidColorOrFallback } from "../../shared/Helper";
+import { applyWindowBackdrop } from "../../shared/NativeHelper";
 import { getActivePageDomain, sendMessageToActiveTabs, sendMessageToAllTabs, sendMessageToDomainTabs, sendMessageToWorker } from "../../shared/MessageHelper";
 import { getContentScripts, loadSettings, saveSettings } from "../../shared/StorageHelper";
 import type { SupportedWebsite } from "../../types/ContentScripts";
@@ -28,6 +29,13 @@ const newSiteSpecificSettingsDomainInput = useTemplateRef("newSiteSpecificSettin
 const extensionSettings = ref<ExtensionSettings["transparentZenSettings"] | null>(null);
 const supportedWebsites = ref<Array<SupportedWebsite>>([]);
 const editingBlacklistedDomains = ref<boolean>(false);
+const backdropError = ref<string | null>(null);
+
+const applyBackdrop = async () => {
+	if (!extensionSettings.value) return;
+	saveSettings(toRaw(extensionSettings.value));
+	backdropError.value = await applyWindowBackdrop(extensionSettings.value.windowBackdrop);
+};
 const editingSiteSpecificDomains = ref<boolean>(false);
 const newDisabledDomain = ref<string>("");
 const newSiteSpecificSettingsDomain = ref<string>("");
@@ -480,6 +488,17 @@ const removeBackgroundImage = () => {
                 @change="changeSetting">
               <span class="range-value">{{ extensionSettings.transparencyAmount }}%</span>
             </div>
+          </div>
+          <div class="setting">
+            <span class="label">Window Backdrop</span>
+            <div class="value">
+              <select name="window-backdrop" v-model.number="extensionSettings.windowBackdrop">
+                <option v-for="backdrop in WINDOW_BACKDROPS" :key="backdrop.value" :value="backdrop.value">{{ backdrop.label }}</option>
+              </select>
+              <button type="button" @click="applyBackdrop">Apply and restart Zen</button>
+            </div>
+            <p class="description">The blur behind the window is drawn by Windows. Applying writes the setting through the native helper (native-host/install.ps1) and restarts Zen, your tabs are restored.</p>
+            <p class="description" v-if="backdropError" role="alert"><strong>{{ backdropError }}</strong></p>
           </div>
           <div class="setting" :class="{disabled: extensionSettings.themeMode !== 'transparent'}">
             <span class="label">Lightweight Transparency</span>

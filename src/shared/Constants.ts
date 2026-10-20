@@ -4,6 +4,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings["transparentZenSettings"] = {
 	themeMode: "transparent",
 	transparencyMode: "partial",
 	transparencyAmount: 50,
+	windowBackdrop: 0,
 	enableWhitelist: false,
 	lightweightTransparency: false,
 	textColor: "#FFFFFF",
@@ -23,6 +24,13 @@ export const THEME_MODES: Array<{ value: ExtensionSettings["transparentZenSettin
 	{ value: "light", label: "Light" },
 	{ value: "dark", label: "Dark" },
 	{ value: "transparent", label: "Transparent" },
+];
+
+export const WINDOW_BACKDROPS: Array<{ value: ExtensionSettings["transparentZenSettings"]["windowBackdrop"]; label: string }> = [
+	{ value: 0, label: "Automatic" },
+	{ value: 1, label: "Mica (light blur)" },
+	{ value: 2, label: "Acrylic (strong blur)" },
+	{ value: 3, label: "Mica Alt (darker tint)" },
 ];
 
 export const GITHUB_ENDPOINTS = {

@@ -5,8 +5,9 @@ import { computed, onMounted, ref, toRaw, watch } from "vue";
 import { Codemirror } from "vue-codemirror";
 import { ColorPicker } from "vue3-colorpicker";
 import type { Browser } from "webextension-polyfill-ts";
-import { DEFAULT_SETTINGS, THEME_MODES } from "../../shared/Constants";
+import { DEFAULT_SETTINGS, THEME_MODES, WINDOW_BACKDROPS } from "../../shared/Constants";
 import { getValidColorOrFallback } from "../../shared/Helper";
+import { applyWindowBackdrop } from "../../shared/NativeHelper";
 import { getActivePageDomain, sendMessageToActiveTabs, sendMessageToAllTabs, sendMessageToDomainTabs, sendMessageToWorker } from "../../shared/MessageHelper";
 import { getContentScripts, loadSettings, saveSettings } from "../../shared/StorageHelper";
 import type { SupportedWebsite } from "../../types/ContentScripts";
@@ -25,6 +26,7 @@ const supportedWebsites = ref<Array<SupportedWebsite>>([]);
 const showAllWebsites = ref(false);
 const currentDomain = ref<string>();
 const domainDisabled = ref(false);
+const backdropError = ref<string | null>(null);
 const siteSpecificSettings = ref<SiteSpecificSetting>({ domain: "", enabled: false, customStyles: "", backgroundSelectors: [] });
 
 const colorPickerTextColor = ref("");
@@ -130,6 +132,12 @@ const changeTransparencyAmount = () => {
 		sendMessageToAllTabs({ action: "changeTransparency", settings: toRaw(extensionSettings.value) });
 		saveSettings(toRaw(extensionSettings.value));
 	}, 100);
+};
+
+const applyBackdrop = async () => {
+	if (!extensionSettings.value) return;
+	saveSettings(toRaw(extensionSettings.value));
+	backdropError.value = await applyWindowBackdrop(extensionSettings.value.windowBackdrop);
 };
 
 const toggleDomainBlacklist = async (enabled: boolean) => {
@@ -266,6 +274,17 @@ const openSettingsPage = () => {
 							<input type="range" name="transparency-amount" min="0" max="100" v-model.number="extensionSettings.transparencyAmount" @input="changeTransparencyAmount">
 							<span class="range-value">{{ extensionSettings.transparencyAmount }}%</span>
 						</label>
+						<div class="setting">
+							<label for="window-backdrop">Window backdrop</label>
+							<div class="backdrop-setting">
+								<select id="window-backdrop" name="window-backdrop" v-model.number="extensionSettings.windowBackdrop">
+									<option v-for="backdrop in WINDOW_BACKDROPS" :key="backdrop.value" :value="backdrop.value">{{ backdrop.label }}</option>
+								</select>
+								<button type="button" @click="applyBackdrop">Apply</button>
+							</div>
+							<p class="hint">Apply restarts Zen, your tabs are restored.</p>
+							<p class="error" v-if="backdropError" role="alert">{{ backdropError }}</p>
+						</div>
 						<label class="setting">
 							<input type="checkbox" name="lightweight-transparency" v-model="extensionSettings.lightweightTransparency" @input="changeSetting">
 							<span class="custom-checkbox"></span>
