@@ -1,0 +1,20 @@
+/* Light and dark themes: pages that do not match the chosen scheme get inverted */
+html[data-tz-invert] {
+  background-color: var(--tz-page-background, #fff) !important;
+  filter: invert(1) hue-rotate(180deg) !important;
+
+  /* Invert media back so photos and videos keep their real colors */
+  /* shortcut: CSS background images stay inverted, needs per-element detection to fix */
+  & :is(img, video, canvas, iframe, embed, object, svg image) {
+    filter: invert(1) hue-rotate(180deg) !important;
+  }
+}
+
+html[data-tz-theme="transparent"] {
+  scrollbar-color: rgb(from var(--color-text, #fff) r g b / 0.35) transparent;
+
+  /* Full transparency fades the whole page, including text, images and controls */
+  &[data-tz-transparency="full"] {
+    opacity: var(--tz-content-opacity, 1) !important;
+  }
+}

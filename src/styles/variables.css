@@ -19,9 +19,10 @@
   --color-orange: darkorange;
   --color-blue: deepskyblue;
 
-  --transparent-background: rgb(from var(--color-bg) r g b / 0.5);
-  --transparent-background-dark: rgb(from var(--color-bg) r g b / 0.75);
-  --transparent-background-darker: rgb(from var(--color-bg) r g b / 0.9);
+  /* --tz-background-alpha is driven by the transparency slider */
+  --transparent-background: rgb(from var(--color-bg) r g b / var(--tz-background-alpha, 0.5));
+  --transparent-background-dark: rgb(from var(--color-bg) r g b / min(1, calc(var(--tz-background-alpha, 0.5) * 1.5)));
+  --transparent-background-darker: rgb(from var(--color-bg) r g b / min(1, calc(var(--tz-background-alpha, 0.5) * 1.8)));
   --transparent-text: rgb(from var(--color-text) r g b / 0.5);
   --transparent-primary: rgb(from var(--color-primary) r g b / 0.5);
   --gradient: linear-gradient(20deg, var(--color-primary), var(--color-tertiary));

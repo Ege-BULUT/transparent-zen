@@ -5,9 +5,9 @@ import { computed, nextTick, onMounted, ref, toRaw, useTemplateRef, watch } from
 import { Codemirror } from "vue-codemirror";
 import { ColorPicker } from "vue3-colorpicker";
 import type { Browser } from "webextension-polyfill-ts";
-import { DEFAULT_SETTINGS, GITHUB_ENDPOINTS } from "../../shared/Constants";
+import { DEFAULT_SETTINGS, GITHUB_ENDPOINTS, THEME_MODES } from "../../shared/Constants";
 import { getValidColorOrFallback } from "../../shared/Helper";
-import { getActivePageDomain, sendMessageToActiveTabs, sendMessageToDomainTabs, sendMessageToWorker } from "../../shared/MessageHelper";
+import { getActivePageDomain, sendMessageToActiveTabs, sendMessageToAllTabs, sendMessageToDomainTabs, sendMessageToWorker } from "../../shared/MessageHelper";
 import { getContentScripts, loadSettings, saveSettings } from "../../shared/StorageHelper";
 import type { SupportedWebsite } from "../../types/ContentScripts";
 import type { ExtensionSettings, SiteSpecificSetting } from "../../types/ExtensionSettings";
@@ -151,8 +151,11 @@ const changeSetting = async (event: Event) => {
 
 	const input = event.target as HTMLInputElement;
 	switch (input.name) {
-		case "enable-transparency":
-			sendMessageToActiveTabs({ action: "toggleTransparency", enabled: input.checked });
+		case "theme-mode":
+			sendMessageToAllTabs({ action: "changeTheme", settings: toRaw(extensionSettings.value) });
+			break;
+		case "transparency-amount":
+			sendMessageToAllTabs({ action: "changeTransparency", settings: toRaw(extensionSettings.value) });
 			break;
 		case "text-color":
 			sendMessageToActiveTabs({ action: "changeTextColor", value: getValidColorOrFallback(input.value, DEFAULT_SETTINGS.textColor) });
@@ -307,10 +310,11 @@ const hideNewBlacklistedDomainInput = () => {
 	newDisabledDomain.value = "";
 };
 
-const toggleDynamicTransparency = () => {
+const toggleFullTransparency = () => {
 	if (!extensionSettings.value) return;
 
-	extensionSettings.value.enableTransparency = !extensionSettings.value.enableTransparency;
+	extensionSettings.value.transparencyMode = extensionSettings.value.transparencyMode === "full" ? "partial" : "full";
+	sendMessageToAllTabs({ action: "changeTransparency", settings: toRaw(extensionSettings.value) });
 	saveSettings(toRaw(extensionSettings.value));
 };
 
@@ -445,27 +449,51 @@ const removeBackgroundImage = () => {
         </section>
 
         <section>
-          <h2 class="headline">
-            <span>Dynamic Transparency</span>
-            <button type="button" class="toggle" :class="{active: extensionSettings.enableTransparency}" @click="toggleDynamicTransparency"></button>
-          </h2>
+          <h2 class="headline">Theme</h2>
           <p class="description">
-            Enabling this will enable an experimental approach to make any website transparent by crawling the site to remove backgrounds and adapt colors to keep it as readable and usable as possible.<br/>
+            Light and Dark adapt every website to the chosen color scheme. Transparent removes page backgrounds so the browser backdrop shows through.<br/>
+            Partial transparency keeps text, images and controls solid, Full transparency fades the whole page. The slider also controls the Zen interface when the companion userChrome.css is installed.<br/>
             <strong>Please keep in mind that this might not work for some websites, especially with more complex elements as well as overlays and modals!</strong>
           </p>
-          <div class="setting" :class="{disabled: !extensionSettings.enableTransparency}">
+          <div class="setting">
+            <span class="label">Theme</span>
+            <div class="value">
+              <select name="theme-mode" v-model="extensionSettings.themeMode" @change="changeSetting">
+                <option v-for="mode in THEME_MODES" :key="mode.value" :value="mode.value">{{ mode.label }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="setting" :class="{disabled: extensionSettings.themeMode !== 'transparent'}">
+            <span class="label">Full Transparency</span>
+            <div class="value">
+              <button type="button" class="toggle" :class="{active: extensionSettings.transparencyMode === 'full'}" @click="toggleFullTransparency"></button>
+            </div>
+          </div>
+          <div class="setting" :class="{disabled: extensionSettings.themeMode !== 'transparent'}">
+            <span class="label">Transparency</span>
+            <div class="value">
+              <input
+                type="range"
+                min="0" max="100"
+                name="transparency-amount"
+                v-model.number="extensionSettings.transparencyAmount"
+                @change="changeSetting">
+              <span class="range-value">{{ extensionSettings.transparencyAmount }}%</span>
+            </div>
+          </div>
+          <div class="setting" :class="{disabled: extensionSettings.themeMode !== 'transparent'}">
             <span class="label">Lightweight Transparency</span>
             <div class="value">
               <button type="button" class="toggle" :class="{active: extensionSettings.lightweightTransparency}" @click="toggleLightweightTransparency"></button>
             </div>
           </div>
-          <div class="setting" :class="{disabled: !extensionSettings.enableTransparency}">
+          <div class="setting">
             <span class="label">Whitelist instead of Blacklist</span>
             <div class="value">
               <button type="button" class="toggle" :class="{active: extensionSettings.enableWhitelist}" @click="toggleWhitelist"></button>
             </div>
           </div>
-          <div class="setting" :class="{disabled: !extensionSettings.enableTransparency}">
+          <div class="setting" :class="{disabled: extensionSettings.themeMode !== 'transparent'}">
             <span class="label">Background Layers</span>
             <div class="value">
               <input
@@ -477,7 +505,7 @@ const removeBackgroundImage = () => {
                 @change="changeSetting">
             </div>
           </div>
-          <div class="setting" :class="{disabled: !extensionSettings.enableTransparency}">
+          <div class="setting">
             <span class="label">
               <template v-if="extensionSettings.enableWhitelist">
                 Whitelisted Domains

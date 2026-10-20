@@ -1,4 +1,5 @@
 import type { Browser } from "webextension-polyfill-ts";
+import { isDomainEnabled } from "../../shared/Helper";
 import type { ExtensionSettings } from "../../types/ExtensionSettings";
 
 declare const browser: Browser;
@@ -18,9 +19,8 @@ export class DynamicTransparency {
 	}
 
 	public async initDynamicTransparency() {
-		if (this.transparentZenSettings?.enableTransparency) {
-			const isInBlacklist = this.transparentZenSettings?.blacklistedDomains?.indexOf(window.location.hostname) >= 0;
-			if (!this.transparentZenSettings?.blacklistedDomains || (!this.transparentZenSettings.enableWhitelist && !isInBlacklist) || (this.transparentZenSettings.enableWhitelist && isInBlacklist)) {
+		if (this.transparentZenSettings?.themeMode === "transparent") {
+			if (isDomainEnabled(this.transparentZenSettings, window.location.hostname)) {
 				browser.runtime.sendMessage({ action: "insertStyles", filePath: "styles/shared/dynamic-transparency.css" });
 				if (!this.transparentZenSettings.lightweightTransparency) {
 					this.processPage();
@@ -163,10 +163,10 @@ export class DynamicTransparency {
 
 		browser.runtime.sendMessage({ action: "removeStyles", filePath: "styles/shared/dynamic-transparency.css" });
 
-		document.body.style.removeProperty("--color-primary");
-		document.body.style.removeProperty("--color-text");
-		document.body.style.removeProperty("--color-background");
-		document.body.style.removeProperty("--custom-background-image");
+		document.documentElement.style.removeProperty("--color-primary");
+		document.documentElement.style.removeProperty("--color-text");
+		document.documentElement.style.removeProperty("--color-bg");
+		document.documentElement.style.removeProperty("--custom-background-image");
 		document.documentElement?.classList.remove("tz-custom-background");
 
 		const processedElements = document.querySelectorAll("[data-tz-processed]");

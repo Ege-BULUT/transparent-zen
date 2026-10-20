@@ -1,33 +1,46 @@
 import type { Browser } from "webextension-polyfill-ts";
+import { getTransparencyLevels, isDomainEnabled, withDefaults } from "../shared/Helper";
 import type { ContentScripts, SupportedWebsite } from "../types/ContentScripts";
 import type { ExtensionSettings, SiteSpecificSetting } from "../types/ExtensionSettings";
 import type { Message } from "../types/Message";
+import { ColorScheme } from "./modules/ColorScheme";
 import { DynamicTransparency } from "./modules/DynamicTransparency";
 import { SupportedSite } from "./modules/SupportedSite";
 import { WebInspector } from "./modules/WebInspector";
-import "./transparent-zen.css";
 
 declare const browser: Browser;
+
+const DYNAMIC_TRANSPARENCY_STYLES = "styles/shared/dynamic-transparency.css";
 
 class TransparentZen {
 	private dynamicTransparency: DynamicTransparency | undefined;
 	private supportedSite: SupportedSite | undefined;
 	private webInspector: WebInspector | undefined;
+	private colorScheme = new ColorScheme();
 	private transparentZenSettings: ExtensionSettings["transparentZenSettings"] | undefined;
 	private siteSpecificSettings: SiteSpecificSetting | null = null;
-	private isSupportedWebsite = false;
+	private matchesSupportedWebsite = false;
 
 	constructor() {
 		this.initLoadingScreen();
 		// biome-ignore format: readability
 		this.checkIfWebsiteAlreadySupported().then(contentScript => {
 			browser.storage.local.get("transparentZenSettings").then(async (settings) => {
-				this.transparentZenSettings = (settings as ExtensionSettings).transparentZenSettings;
-				if (!contentScript) {
-					console.info("Website is not supported by Transparent Zen");
+				this.transparentZenSettings = withDefaults((settings as ExtensionSettings).transparentZenSettings);
+				this.matchesSupportedWebsite = Boolean(contentScript);
+				this.applyThemeAttributes();
+				// Hand-made site styles only exist for the transparent theme, light and dark use the generic engine
+				if (!contentScript || this.transparentZenSettings.themeMode !== "transparent") {
 					this.webInspector = new WebInspector(this.transparentZenSettings);
 					this.dynamicTransparency = new DynamicTransparency(this.transparentZenSettings, this.removeLoadingScreen, this.initExtensionSettingsStyles.bind(this));
-					await this.dynamicTransparency?.initDynamicTransparency();
+					if (this.transparentZenSettings.themeMode === "transparent") {
+						await this.dynamicTransparency.initDynamicTransparency();
+					} else {
+						this.onDomReady(() => {
+							this.applyColorScheme();
+							this.removeLoadingScreen();
+						});
+					}
 					this.initSiteSpecificSettings();
 					this.initBrowserEvents();
 				} else {
@@ -54,7 +67,6 @@ class TransparentZen {
 						for (const match of script.matches) {
 							const regex = new RegExp(match);
 							if (regex.test(currentUrl)) {
-								this.isSupportedWebsite = true;
 								resolve(script as SupportedWebsite);
 								break;
 							}
@@ -109,52 +121,19 @@ class TransparentZen {
 	private initBrowserEvents(): void {
 		browser.runtime.onMessage.addListener((request: Message) => {
 			switch (request.action) {
-				case "toggleTransparency": {
-					if (this.isSupportedWebsite) break;
-
-					if (request.enabled) {
-						browser.runtime.sendMessage({ action: "insertStyles", filePath: "styles/shared/dynamic-transparency.css" });
-						if (!this.transparentZenSettings?.lightweightTransparency) {
-							this.dynamicTransparency?.processPage(true);
-						}
-					} else {
-						this.dynamicTransparency?.removeTransparencyRules();
+				case "changeTheme": {
+					// Supported sites pick their stylesheet at load time, so a reload is the clean way to switch themes there
+					if (this.matchesSupportedWebsite) {
+						window.location.reload();
+						break;
 					}
+					this.updateSettings(request.settings);
+					this.applyTheme();
 					break;
 				}
-				case "toggleLightweight": {
-					if (this.isSupportedWebsite) break;
-
-					if (request.enabled) {
-						this.dynamicTransparency?.removeTransparencyRules();
-						browser.runtime.sendMessage({ action: "insertStyles", filePath: "styles/shared/dynamic-transparency.css" });
-					} else {
-						this.dynamicTransparency?.processPage(true);
-					}
-					break;
-				}
-				case "toggleWhitelist": {
-					if (!this.transparentZenSettings?.blacklistedDomains || this.isSupportedWebsite) break;
-
-					if (request.enabled) {
-						if (this.transparentZenSettings?.blacklistedDomains.indexOf(window.location.hostname) >= 0) {
-							browser.runtime.sendMessage({ action: "insertStyles", filePath: "styles/shared/dynamic-transparency.css" });
-							if (!this.transparentZenSettings?.lightweightTransparency) {
-								this.dynamicTransparency?.processPage(true);
-							}
-						} else {
-							this.dynamicTransparency?.removeTransparencyRules();
-						}
-					} else {
-						if (this.transparentZenSettings?.blacklistedDomains.indexOf(window.location.hostname) >= 0) {
-							this.dynamicTransparency?.removeTransparencyRules();
-						} else {
-							browser.runtime.sendMessage({ action: "insertStyles", filePath: "styles/shared/dynamic-transparency.css" });
-							if (!this.transparentZenSettings?.lightweightTransparency) {
-								this.dynamicTransparency?.processPage(true);
-							}
-						}
-					}
+				case "changeTransparency": {
+					this.updateSettings(request.settings);
+					this.applyThemeAttributes();
 					break;
 				}
 				case "toggleInspector": {
@@ -177,7 +156,7 @@ class TransparentZen {
 					break;
 				}
 				case "changeBackgroundColor": {
-					this.applyCustomProperty("--transparent-background", request.value as string);
+					this.applyCustomProperty("--color-bg", request.value as string);
 					break;
 				}
 				case "changeBackgroundImage": {
@@ -276,7 +255,7 @@ class TransparentZen {
 			this.applyCustomProperty("--color-text", this.transparentZenSettings.textColor);
 		}
 		if (this.transparentZenSettings?.backgroundColor) {
-			this.applyCustomProperty("--transparent-background", this.transparentZenSettings.backgroundColor);
+			this.applyCustomProperty("--color-bg", this.transparentZenSettings.backgroundColor);
 		}
 		if (this.transparentZenSettings?.backgroundImage) {
 			this.blobToDataURL(this.transparentZenSettings.backgroundImage).then((dataUrl) => {
@@ -311,7 +290,63 @@ class TransparentZen {
 	}
 
 	private applyCustomProperty(property: string, color: string): void {
-		document.body.style.setProperty(property, color);
+		document.documentElement.style.setProperty(property, color);
+	}
+
+	private updateSettings(settings: ExtensionSettings["transparentZenSettings"] | undefined): void {
+		if (!settings || !this.transparentZenSettings) return;
+		// Mutate in place because the modules hold a reference to the same settings object
+		Object.assign(this.transparentZenSettings, withDefaults(settings));
+	}
+
+	private applyThemeAttributes(): void {
+		const root = document.documentElement;
+		const settings = this.transparentZenSettings;
+		if (!settings || !isDomainEnabled(settings, window.location.hostname)) {
+			delete root.dataset.tzTheme;
+			delete root.dataset.tzTransparency;
+			return;
+		}
+
+		const { backgroundAlpha, contentOpacity } = getTransparencyLevels(settings);
+		root.dataset.tzTheme = settings.themeMode;
+		root.dataset.tzTransparency = settings.transparencyMode;
+		root.style.setProperty("--tz-background-alpha", backgroundAlpha.toString());
+		root.style.setProperty("--tz-content-opacity", contentOpacity.toString());
+	}
+
+	private applyColorScheme(): void {
+		const settings = this.transparentZenSettings;
+		if (!settings || settings.themeMode === "transparent" || !isDomainEnabled(settings, window.location.hostname)) return;
+		this.colorScheme.apply(settings.themeMode);
+	}
+
+	private applyTheme(): void {
+		const settings = this.transparentZenSettings;
+		if (!settings) return;
+
+		this.dynamicTransparency?.removeTransparencyRules();
+		this.colorScheme.clear();
+		this.applyThemeAttributes();
+		if (!isDomainEnabled(settings, window.location.hostname)) return;
+
+		if (settings.themeMode === "transparent") {
+			browser.runtime.sendMessage({ action: "insertStyles", filePath: DYNAMIC_TRANSPARENCY_STYLES });
+			this.initExtensionSettingsStyles();
+			if (!settings.lightweightTransparency) {
+				this.dynamicTransparency?.processPage(true);
+			}
+		} else {
+			this.applyColorScheme();
+		}
+	}
+
+	private onDomReady(callback: () => void): void {
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", callback, { once: true });
+		} else {
+			callback();
+		}
 	}
 }
 

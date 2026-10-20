@@ -5,7 +5,7 @@ import { computed, onMounted, ref, toRaw, watch } from "vue";
 import { Codemirror } from "vue-codemirror";
 import { ColorPicker } from "vue3-colorpicker";
 import type { Browser } from "webextension-polyfill-ts";
-import { DEFAULT_SETTINGS } from "../../shared/Constants";
+import { DEFAULT_SETTINGS, THEME_MODES } from "../../shared/Constants";
 import { getValidColorOrFallback } from "../../shared/Helper";
 import { getActivePageDomain, sendMessageToActiveTabs, sendMessageToAllTabs, sendMessageToDomainTabs, sendMessageToWorker } from "../../shared/MessageHelper";
 import { getContentScripts, loadSettings, saveSettings } from "../../shared/StorageHelper";
@@ -15,6 +15,7 @@ import type { Manifest } from "../../types/Manifest";
 
 declare const browser: Browser;
 let inputDebounce: number;
+let transparencyDebounce: number;
 let customStylesSavingDebounce: number;
 
 const manifest: Manifest = browser.runtime.getManifest();
@@ -81,18 +82,13 @@ const changeSetting = (event: Event) => {
 	inputDebounce = setTimeout(async () => {
 		const input = event.target as HTMLInputElement;
 		switch (input.name) {
-			case "enable-transparency":
-				sendMessageToAllTabs({ action: "toggleTransparency", enabled: input.checked });
-				break;
 			case "enable-whitelist":
-				sendMessageToAllTabs({ action: "toggleWhitelist", enabled: input.checked });
-				break;
 			case "lightweight-transparency":
-				sendMessageToAllTabs({ action: "toggleLightweight", enabled: input.checked });
+				sendMessageToAllTabs({ action: "changeTheme", settings: toRaw(extensionSettings.value) ?? undefined });
 				break;
 			case "blacklist-domain":
 				await toggleDomainBlacklist(input.checked);
-				sendMessageToActiveTabs({ action: "toggleTransparency", enabled: extensionSettings.value?.enableWhitelist ? input.checked : !input.checked });
+				sendMessageToActiveTabs({ action: "changeTheme", settings: toRaw(extensionSettings.value) ?? undefined });
 				break;
 			case "site-specific-settings":
 				await toggleSiteSpecificSettings(input.checked);
@@ -111,6 +107,29 @@ const changeSetting = (event: Event) => {
 
 		saveSettings(toRaw(extensionSettings.value));
 	}, 500);
+};
+
+const changeTheme = () => {
+	if (!extensionSettings.value) return;
+	sendMessageToAllTabs({ action: "changeTheme", settings: toRaw(extensionSettings.value) });
+	saveSettings(toRaw(extensionSettings.value));
+};
+
+const toggleFullTransparency = (event: Event) => {
+	if (!extensionSettings.value) return;
+	extensionSettings.value.transparencyMode = (event.target as HTMLInputElement).checked ? "full" : "partial";
+	sendMessageToAllTabs({ action: "changeTransparency", settings: toRaw(extensionSettings.value) });
+	saveSettings(toRaw(extensionSettings.value));
+};
+
+const changeTransparencyAmount = () => {
+	if (transparencyDebounce) clearTimeout(transparencyDebounce);
+
+	transparencyDebounce = setTimeout(() => {
+		if (!extensionSettings.value) return;
+		sendMessageToAllTabs({ action: "changeTransparency", settings: toRaw(extensionSettings.value) });
+		saveSettings(toRaw(extensionSettings.value));
+	}, 100);
 };
 
 const toggleDomainBlacklist = async (enabled: boolean) => {
@@ -227,33 +246,47 @@ const openSettingsPage = () => {
       <section>
 				<h2 class="headline">Settings</h2>
 				<form id="extension-settings">
-					<label class="setting">
-						<input type="checkbox" name="enable-transparency" v-model="extensionSettings.enableTransparency" @input="changeSetting">
-						<span class="custom-checkbox"></span>
-						Enable Dynamic Transparency for all websites (experimental)
-					</label>
-					<div class="settings-group" data-depends-on="enable-transparency" v-show="extensionSettings.enableTransparency">
+					<div class="setting">
+						<span id="theme-label">Theme</span>
+						<div class="theme-switcher" role="radiogroup" aria-labelledby="theme-label">
+							<label v-for="mode in THEME_MODES" :key="mode.value" class="theme-option" :class="{active: extensionSettings.themeMode === mode.value}">
+								<input type="radio" name="theme-mode" :value="mode.value" v-model="extensionSettings.themeMode" @change="changeTheme">
+								{{ mode.label }}
+							</label>
+						</div>
+					</div>
+					<div class="settings-group" v-show="extensionSettings.themeMode === 'transparent'">
+						<label class="setting">
+							<input type="checkbox" name="full-transparency" :checked="extensionSettings.transparencyMode === 'full'" @change="toggleFullTransparency">
+							<span class="custom-checkbox"></span>
+							Full transparency (text, images and controls fade too)
+						</label>
+						<label class="setting range-setting">
+							Transparency
+							<input type="range" name="transparency-amount" min="0" max="100" v-model.number="extensionSettings.transparencyAmount" @input="changeTransparencyAmount">
+							<span class="range-value">{{ extensionSettings.transparencyAmount }}%</span>
+						</label>
 						<label class="setting">
 							<input type="checkbox" name="lightweight-transparency" v-model="extensionSettings.lightweightTransparency" @input="changeSetting">
 							<span class="custom-checkbox"></span>
 							Lightweight Transparency
 						</label>
-						<label class="setting">
-							<input type="checkbox" name="enable-whitelist" v-model="extensionSettings.enableWhitelist" @input="changeSetting">
-							<span class="custom-checkbox"></span>
-							Whitelist instead of Blacklist
-						</label>
-						<label class="setting">
-							<input type="checkbox" name="blacklist-domain" :checked="domainDisabled" @input="changeSetting">
-							<span class="custom-checkbox"></span>
-							<template v-if="extensionSettings.enableWhitelist">
-								Enable for this domain
-							</template>
-							<template v-else>
-								Disable for this domain
-							</template>
-						</label>
 					</div>
+					<label class="setting">
+						<input type="checkbox" name="enable-whitelist" v-model="extensionSettings.enableWhitelist" @input="changeSetting">
+						<span class="custom-checkbox"></span>
+						Whitelist instead of Blacklist
+					</label>
+					<label class="setting">
+						<input type="checkbox" name="blacklist-domain" :checked="domainDisabled" @input="changeSetting">
+						<span class="custom-checkbox"></span>
+						<template v-if="extensionSettings.enableWhitelist">
+							Enable for this domain
+						</template>
+						<template v-else>
+							Disable for this domain
+						</template>
+					</label>
 					<label class="setting">
 						<input type="checkbox" name="site-specific-settings" :checked="siteSpecificSettings.enabled" @input="changeSetting">
 						<span class="custom-checkbox"></span>
@@ -350,8 +383,8 @@ const openSettingsPage = () => {
       </section>
     </main>
 		<footer id="extension-footer">
-			<p>Transparent Zen is open source and everyone can contribute their custom styles to support more websites.</p>
-			<a href="https://github.com/frostybiscuit/transparent-zen">GitHub Repository</a>
+			<p>Community edition of Transparent Zen. Not the official release.</p>
+			<a href="https://github.com/Ege-BULUT/transparent-zen">GitHub Repository</a>
 		</footer>
   </div>
 </template>

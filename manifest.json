@@ -21,6 +21,7 @@
     "activeTab",
     "storage",
     "tabs",
+    "theme",
     "<all_urls>"
   ],
   "web_accessible_resources": [

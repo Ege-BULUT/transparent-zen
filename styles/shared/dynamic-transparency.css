@@ -1,6 +1,11 @@
 @import url("./base.css");
 @import url("./web-inspector.css");
 
+/* The page base keeps a tint whose strength follows the transparency slider */
+html[data-tz-theme="transparent"] {
+  background: var(--transparent-background) !important;
+}
+
 *:not([data-tz-anchor] *) {
   &:not(a):not(button):not(input):not(textarea):not(select):not(option):not(code):not(pre) {
     &:not(a *):not(button *):not(code *):not(pre *) {

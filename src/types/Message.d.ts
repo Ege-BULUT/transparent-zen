@@ -3,9 +3,8 @@ import type { ExtensionSettings } from "./ExtensionSettings";
 export type Message = {
 	action:
 		| "updateSettings"
-		| "toggleTransparency"
-		| "toggleWhitelist"
-		| "toggleLightweight"
+		| "changeTheme"
+		| "changeTransparency"
 		| "getDomain"
 		| "changePrimaryColor"
 		| "changeTextColor"

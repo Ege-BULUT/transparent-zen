@@ -1,12 +1,14 @@
 import type { ExtensionSettings } from "../types/ExtensionSettings";
 
 export const DEFAULT_SETTINGS: ExtensionSettings["transparentZenSettings"] = {
-	enableTransparency: false,
+	themeMode: "transparent",
+	transparencyMode: "partial",
+	transparencyAmount: 50,
 	enableWhitelist: false,
 	lightweightTransparency: false,
 	textColor: "#FFFFFF",
 	primaryColor: "#82C7FF",
-	backgroundColor: "rgba(17, 17, 17, 0.5)",
+	backgroundColor: "rgb(17, 17, 17)",
 	transparencyDepth: 2,
 	backgroundImage: null,
 	backgroundImageBrightness: 100,
@@ -17,6 +19,12 @@ export const DEFAULT_SETTINGS: ExtensionSettings["transparentZenSettings"] = {
 	siteSpecificSettings: [],
 };
 
+export const THEME_MODES: Array<{ value: ExtensionSettings["transparentZenSettings"]["themeMode"]; label: string }> = [
+	{ value: "light", label: "Light" },
+	{ value: "dark", label: "Dark" },
+	{ value: "transparent", label: "Transparent" },
+];
+
 export const GITHUB_ENDPOINTS = {
-	LATEST_RELEASE: "https://api.github.com/repos/frostybiscuit/transparent-zen/releases/latest",
+	LATEST_RELEASE: "https://api.github.com/repos/Ege-BULUT/transparent-zen/releases/latest",
 };

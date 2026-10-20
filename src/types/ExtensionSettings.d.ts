@@ -2,7 +2,9 @@ import type { SupportedWebsite } from "./ContentScripts";
 
 export type ExtensionSettings = {
 	transparentZenSettings: {
-		enableTransparency: boolean;
+		themeMode: ThemeMode;
+		transparencyMode: TransparencyMode;
+		transparencyAmount: number;
 		lightweightTransparency: boolean;
 		enableWhitelist: boolean;
 		textColor: string;
@@ -18,6 +20,10 @@ export type ExtensionSettings = {
 		siteSpecificSettings: Array<SiteSpecificSetting>;
 	};
 };
+
+export type ThemeMode = "light" | "dark" | "transparent";
+
+export type TransparencyMode = "partial" | "full";
 
 export type SiteSpecificSetting = {
 	domain: string;
