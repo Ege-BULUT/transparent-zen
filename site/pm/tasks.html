@@ -27,8 +27,8 @@
       --crit: #ff8a80; --crit-bg: #3a1a17;
     }
   }
-  /* Scrollbars. A page here nests two or three scroll regions — a board's column row, a
-     column's card list, a modal, a code block — and the platform default draws every one
+  /* Scrollbars. A page here nests two or three scroll regions (a board's column row, a
+     column's card list, a modal, a code block), and the platform default draws every one
      of them as the same chunky grey rail, which makes a page read as a stack of framed
      boxes instead of one surface. Thin, transparent track, thumb from the palette above,
      darker under the pointer. Scoped to elements inside the page, never the window's own
@@ -87,7 +87,7 @@
   header p.scope { color: var(--sub); margin: 0 0 1rem; font-size: 1rem; max-width: 80ch; }
 
   /* Density toggle. Relax is the board as it was: columns at a comfortable 236px and a
-     sideways scroll. Fit gives up the scroll instead — the eight columns divide whatever
+     sideways scroll. Fit gives up the scroll instead: the eight columns divide whatever
      width the viewport has, cards get narrower and taller, and nothing scrolls sideways.
      Every size below is a variable so the two modes are the same rules with different
      numbers, rather than a second stylesheet that drifts from the first. */
@@ -102,8 +102,8 @@
     --chip-size: 0.6rem; --cards-h: 78vh;
   }
 
-  /* Fit-only trims. At ~120px of card width the milestone chip is redundant — the board
-     is one milestone deep in practice and the modal still shows it — and the column
+  /* Fit-only trims. At ~120px of card width the milestone chip is redundant (the board
+     is one milestone deep in practice and the modal still shows it), and the column
      head's gap has to give before its label does. Nothing here hides a number: the count,
      the urgency and the tag all stay. */
   html.fit .col-head { gap: 0.3rem; margin-bottom: 0.5rem; }
@@ -137,13 +137,13 @@
   .toolbar input { flex: 1 1 220px; }
   .toolbar .count { color: var(--sub); font-size: 0.85rem; margin-left: auto; white-space: nowrap; }
 
-  /* The column row scrolls sideways, so snap to column starts — a half column parked
+  /* The column row scrolls sideways, so snap to column starts: a half column parked
      under the viewport edge is what made this feel cramped. */
   .board-wrap { max-width: 100%; overflow-x: auto; padding: 0 1.5rem 0.25rem;
     scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
   /* max-content, not a pixel figure, so changing .col's min-width below cannot leave a
      stale number here. The old 1360px floor divided into about 144px of usable card width
-     across eight columns — narrower than the average task title, so cards wrapped to four
+     across eight columns, narrower than the average task title, so cards wrapped to four
      or five lines and the chips spilled onto a row of their own. */
   .board { display: flex; gap: var(--col-gap); min-width: max-content; padding-bottom: 0.4rem;
     align-items: flex-start; }
@@ -183,8 +183,8 @@
     gap: 0.4rem; margin-bottom: 0.3rem; }
   .card .cid { font-family: "SF Mono", Menlo, monospace; font-size: calc(var(--chip-size) + 0.04rem); color: var(--sub); }
   /* A title is the one thing on a card that must never be clipped or pushed sideways.
-     `anywhere` breaks the long unspaced tokens task titles are full of — file paths, flags,
-     identifiers — instead of widening the card past its column. */
+     `anywhere` breaks the long unspaced tokens task titles are full of (file paths, flags,
+     identifiers) instead of widening the card past its column. */
   .card h3 { font-size: var(--card-title); margin: 0 0 0.45rem; line-height: 1.32; font-weight: 600;
     overflow-wrap: anywhere; hyphens: auto; }
   .card .card-meta { display: flex; gap: 0.28rem; flex-wrap: wrap; align-items: center;
@@ -938,7 +938,7 @@
   // === facet filters =========================================================
   // Four multi-select dropdowns over the categorical fields. Every value is a
   // checkbox and they all start ticked, so the board opens showing everything.
-  // Unticking one hides that value and keeps the rest — a blacklist, which the
+  // Unticking one hides that value and keeps the rest: a blacklist, which the
   // old single-selects could not express: they could only say "show exactly this
   // one". All ticked and none ticked are deliberately different states. All means
   // no filter; none means nothing matches, which is the honest reading of "you
@@ -1248,7 +1248,7 @@
     var q = searchEl.value.trim().toLowerCase();
     if (q && !((t.title || '').toLowerCase().indexOf(q) > -1 ||
                (t.description || '').toLowerCase().indexOf(q) > -1)) return false;
-    // Every facet must admit the task. A facet with nothing ticked admits nothing —
+    // Every facet must admit the task. A facet with nothing ticked admits nothing;
     // that is the point of the change, and it is why "all ticked" and "none ticked"
     // are no longer the same board.
     for (var i = 0; i < FACETS.length; i++) {
@@ -1581,12 +1581,12 @@
 
   // === density ===============================================================
   // Relax is the board with room to read: 236px columns and a sideways scroll. Fit trades
-  // the scroll away — the columns divide whatever width there is, and cards get narrower
+  // the scroll away: the columns divide whatever width there is, and cards get narrower
   // and taller. Both are the same CSS with different variables, so there is one board to
   // maintain rather than two that drift apart.
   //
   // Fit also lays the sidebar out horizontally, because on a 1440px screen the rail is
-  // 232px of the width the columns are trying to divide — asking for Fit and then being
+  // 232px of the width the columns are trying to divide, and asking for Fit and then being
   // told to press a second control somewhere else is not a fit. That is pure CSS under
   // html.fit, reusing the rules the narrow-viewport breakpoint already defines, so the
   // navigation stays visible and there is no second layout to maintain.

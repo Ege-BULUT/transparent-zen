@@ -18,7 +18,7 @@ new one for a distinct thread of work rather than piling everything into one ent
 
 **Finish a journal with its lesson, and put it at the top.** When a thread of work ends, the
 last step is a short first section saying what someone who was not there should do differently,
-followed by a `---` rule, then the journal itself. Write it in the journal's own language — the
+followed by a `---` rule, then the journal itself. Write it in the journal's own language: the
 viewer splits on structure, not on a keyword, so any language works.
 
 That section is a separate act of writing from the journal, and it is the one that gets skipped,
@@ -26,7 +26,7 @@ because by then the journal already feels finished. It is also the only part mos
 read. A journal records what happened; the lesson is what makes the next person faster.
 
 Keep it short enough to be worth reading first: **at most three paragraphs, at most 30 words
-each, and no more than 12% of the journal it opens** — whichever binds first. Anyone wanting the
+each, and no more than 12% of the journal it opens**, whichever binds first. Anyone wanting the
 detail reads on. A fourth lesson usually means the journal covers two threads and should be two
 journals.
 

@@ -25,8 +25,8 @@
       --p-medium: #fbbf24; --p-low: #fde047;
     }
   }
-  /* Scrollbars. A page here nests two or three scroll regions — a board's column row, a
-     column's card list, a modal, a code block — and the platform default draws every one
+  /* Scrollbars. A page here nests two or three scroll regions (a board's column row, a
+     column's card list, a modal, a code block), and the platform default draws every one
      of them as the same chunky grey rail, which makes a page read as a stack of framed
      boxes instead of one surface. Thin, transparent track, thumb from the palette above,
      darker under the pointer. Scoped to elements inside the page, never the window's own
@@ -79,8 +79,8 @@
   .venn { position: relative; background: var(--panel); border: 1px solid var(--line);
     border-radius: 12px; padding: 10px; display: flex; justify-content: center; }
   .venn svg { width: min(100%, 680px); height: auto; overflow: visible; }
-  /* Set rengi inline geliyor: kategori sayisi dinamik, sabit .set-N sinifi
-     yazilamaz. Ilk uc renk yine --c1..--c3 temasindan okunuyor. */
+  /* Set colour comes inline: the category count is dynamic, so no fixed .set-N
+     class can be written. The first three colours still come from the --c1..--c3 theme. */
   .set { fill-opacity: .10; stroke-width: 1.5; }
   .setlabel { font-size: 14px; font-weight: 650; text-anchor: middle; }
   .setlabel .count { fill: var(--sub); font-weight: 400; }
@@ -272,8 +272,8 @@
 (function () {
   var DATA = JSON.parse(document.getElementById('analysis-data').textContent);
   var META = DATA._meta || {};
-  // Kategori sayisi analist ajanin karar verdigi kadar: diyagram ona gore
-  // kuruluyor (bkz. geometry() / regions()).
+  // The category count is whatever the analyst agent decided on: the diagram
+  // is built to match it (see geometry() / regions()).
   var CATS = Object.keys(META.categories || {});
   var F = DATA.findings || [];
 
@@ -302,7 +302,7 @@
 
   /* Fixed findings are the archive, not the work. On a board that has been
      running a while they outnumber the open ones and crowd the diagram, the
-     priority tables and the details out — so they are hidden by default and
+     priority tables and the details out, so they are hidden by default and
      the toggle brings them back. The choice is remembered per browser; the
      KPI row keeps counting ALL findings, because "12/40 fixed" is the one
      place the archive is the point. */
@@ -336,26 +336,27 @@
 
   /* ---------------------------------------------------------------- venn -- */
 
-  /* Kategori sayisi SABIT DEGIL. Analist ajan kac ayri kategoriye karar
-     verdiyse diyagram o kadar cemberle kuruluyor; geometri N'in fonksiyonu.
+  /* The category count is NOT FIXED. However many separate categories the
+     analyst agent decided on, the diagram is built with that many circles;
+     the geometry is a function of N.
 
-     Yerlesim: N cember, merkezleri orijin etrafinda D yaricapli bir halkada
-     esit araliklarla, ilki tepede. R ve D su iki kosuldan cozuluyor:
+     Layout: N circles, centres evenly spaced on a ring of radius D around
+     the origin, the first one at the top. R and D are solved from two conditions:
 
-       komsu merkez uzakligi  2 D sin(pi/N) = K R      (komsular ortussun)
-       dis sinir              D + R = OUT              (viewBox sabit kalsin)
+       neighbour centre distance  2 D sin(pi/N) = K R  (neighbours overlap)
+       outer bound                D + R = OUT          (viewBox stays fixed)
 
-     K = 1.016 ve OUT = 238, N = 3'te tam olarak eski elle yazilmis
-     R = 150 / D = 88 degerlerini veriyor — yani uc kategorili tahtalar
-     birebir eskisi gibi cikiyor, degisen sey yalnizca artik uce mahkum
-     olmamasi.
+     K = 1.016 and OUT = 238 give, at N = 3, exactly the old hand-written
+     values R = 150 / D = 88. So three-category boards come out
+     identical to before; the only change is that they are no longer
+     stuck at three.
 
-     DURUSTLUK NOTU: N >= 4'te bu artik gercek bir Venn degil. Uc cemberden
-     sonra butun 2^N-1 bolgeyi cemberle cizmek geometrik olarak imkansiz
-     (dord icin elips, besten sonra iyice egzotik sekiller gerekiyor). Onun
-     yerine EULER tarzi bir yerlesim: yalnizca ICINDE BULGU OLAN bolgeler
-     ciziliyor ve her bulgu, ait oldugu kategorilerin merkezlerinin
-     bilesigine oturuyor. Okunurlugu bozan bos bolge kalmiyor. */
+     HONESTY NOTE: at N >= 4 this is no longer a true Venn diagram. Past three
+     circles, drawing all 2^N-1 regions with circles is geometrically impossible
+     (four needs ellipses, five and up need ever more exotic shapes). Instead
+     it is an EULER-style layout: only regions THAT CONTAIN FINDINGS are
+     drawn, and each finding sits at the combination of the centres of the
+     categories it belongs to. No empty regions are left to hurt readability. */
   var OUT = 238, K = 1.016;
   var N = Math.max(1, CATS.length);
   var R = N === 1 ? 170 : OUT / (K / (2 * Math.sin(Math.PI / N)) + 1);
@@ -366,15 +367,15 @@
     CENTRES.push({ x: D * Math.cos(a), y: D * Math.sin(a) });
   }
 
-  /* Set renkleri. Ilk uc tanesi temanin --c1..--c3'u, yani uc kategorili
-     tahtalar tipatip eskisi gibi duruyor. Otesi elle secilmis bir tondan
-     geliyor: altin aci ile uretmek denendi ve dorduncu renk temanin
-     --c2 zeytinine (ton ~47) yapisiyordu. Bu dizi uc temel tonun
-     (~20, ~47, ~220) uzagindan gecirildi. Sekiz uzatma bitince aci
-     tekrarlaniyor ama parlaklik kaydiriliyor, boylece hicbir zaman
-     tukenmiyor. */
-  /* Ilk uc ton --c1..--c3'un yaklasigi; yalnizca o degiskenler okunamazsa
-     (temasiz bir baglam, ya da testler) devreye giriyorlar. */
+  /* Set colours. The first three are the theme's --c1..--c3, so three-category
+     boards look exactly as before. The rest come from hand-picked
+     hues: generating them with the golden angle was tried, and the fourth colour
+     stuck to the theme's --c2 olive (hue ~47). This list was routed away
+     from the three base hues (~20, ~47, ~220). Once the eight extensions run
+     out, the hues repeat but the lightness shifts, so the palette never
+     runs out. */
+  /* The first three hues approximate --c1..--c3; they only kick in when those
+     variables cannot be read (a context with no theme, or the tests). */
   var BASE_HUES = [20, 47, 220];
   var EXTRA_HUES = [142, 288, 172, 328, 96, 258, 196, 118];
   function setColour(i) {
@@ -395,26 +396,26 @@
     return 'hsl(' + EXTRA_HUES[k % EXTRA_HUES.length] + ' 62% ' + light + '%)';
   }
 
-  /* Bir bulgunun ait oldugu kategori indisleri, sirali. */
+  /* The sorted category indices a finding belongs to. */
   function indexSet(f) {
     return (f.categories || []).map(function (c) { return CATS.indexOf(c); })
       .filter(function (i) { return i > -1; }).sort(function (a, b) { return a - b; });
   }
   function keyOf(idx) { return idx.join(','); }
 
-  /* Bolgeler bulgulardan TURETILIYOR, elle sayilmiyor: hangi kategori
-     bilesimleri gercekten doluysa yalnizca onlar yer kapliyor.
+  /* Regions are DERIVED from the findings, not listed by hand: only the category
+     combinations that actually have findings take up space.
 
-     Capa = uyelerin merkezlerinin ortalamasinin yonu, disari dogru
-     spread(k) kadar. k buyudukce spread kuculuyor; butun kategorilere giren
-     bir bulgu tam ortada oturuyor. N = 3'te bu, eski elle yazilmis yedi
-     capayla gorsel olarak ayni yeri veriyor (tekil capalar birebir). */
+     Anchor = the direction of the mean of the members' centres, pushed outwards
+     by spread(k). As k grows, spread shrinks; a finding that belongs to every
+     category sits right in the middle. At N = 3 this lands visually in the same
+     place as the old seven hand-written anchors (single-category anchors match exactly). */
   function regions() {
     var seen = {}, out = [];
-    /* Bolgeler BUTUN bulgulardan kuruluyor, gorunenlerden degil: bolge listesi
-       yalnizca yerlesim capasi uretiyor ve uyeler ayrica suzuluyor. Boylece
-       "show fixed" acilip kapandiginda diskler yerinden oynamiyor — ve
-       tests/test_venn.js geometriyi F uzerinden kosturmaya devam edebiliyor. */
+    /* Regions are built from ALL findings, not just the visible ones: the region
+       list only produces layout anchors, and members are filtered separately. That way
+       the discs do not move when "show fixed" is toggled, and
+       tests/test_venn.js can keep running the geometry over F. */
     F.forEach(function (f) {
       var idx = indexSet(f);
       if (!idx.length) return;
@@ -433,11 +434,11 @@
       out.push({ sets: idx, anchor: anchor });
     });
 
-    /* Ayni capaya dusen bolgeler. Cift sayida kategoride karsilikli ciftlerin
-       (N=4'te {0,2} ve {1,3}) merkez ortalamasi ikisi de tam orijine dusuyor;
-       yon vektoru bilgiyi kaybediyor. Ustuste binmeleri yerine ortak capanin
-       etrafinda kucuk bir cember uzerinde, bilesim anahtarina gore sirali
-       olarak aciliyorlar — deterministik, ayni veri ayni resmi veriyor. */
+    /* Regions that land on the same anchor. With an even number of categories, the
+       centre means of opposite pairs ({0,2} and {1,3} at N=4) both fall exactly on
+       the origin, and the direction vector loses information. Instead of overlapping,
+       they fan out on a small circle around the shared anchor, ordered by their
+       combination key. This is deterministic: the same data gives the same picture. */
     var byPos = {};
     out.forEach(function (r) {
       var k = r.anchor.x.toFixed(0) + '|' + r.anchor.y.toFixed(0);
@@ -458,12 +459,12 @@
     return out;
   }
 
-  /* Kategori sayisi buyudukce komsu bolgeler birbirine yaklasiyor ve iki AYRI
-     bolgenin diskleri ust uste binebiliyor. Capalari daha da acmak diyagrami
-     sisirirdi; onun yerine yerlestirme sonrasi kisa bir gevsetme: ust uste
-     binen her cift birbirini iter, sonuc viewBox'a kirpilir. Deterministik
-     (rastgelelik yok) ve N <= 3'te hicbir sey ust uste binmedigi icin islemsiz
-     geciyor, yani eski tahtalarin gorunumu aynen duruyor. */
+  /* As the category count grows, neighbouring regions move closer and the discs of
+     two SEPARATE regions can overlap. Spreading the anchors further would bloat the
+     diagram; instead there is a short relaxation pass after placement: every overlapping
+     pair pushes the other apart, and the result is clamped to the viewBox. It is deterministic
+     (no randomness), and at N <= 3 nothing overlaps, so it is a no-op
+     and older boards look exactly the same. */
   var VB = { x: -330, y: -285, w: 660, h: 545 };
   function relax(discs, iterations) {
     var pad = 1.5;
@@ -477,7 +478,7 @@
           var want = a.r + b.r + pad;
           if (dist >= want) continue;
           moved = true;
-          // tam ust uste: bilesime gore sabit bir yone ac
+          // exactly on top of each other: separate in a fixed direction based on the combination
           if (dist < 1e-6) { dx = Math.cos(i + j); dy = Math.sin(i + j); dist = 1; }
           var push = (want - dist) / 2 / dist;
           a.x -= dx * push; a.y -= dy * push;
@@ -526,9 +527,9 @@
       svg.push('<circle class="set" cx="' + c.x.toFixed(1) + '" cy="' + c.y.toFixed(1)
         + '" r="' + R.toFixed(1) + '" fill="' + setColour(i) + '" stroke="' + setColour(i) + '"></circle>');
     });
-    /* Etiket cemberin DISINA, merkezden disari dogru: N buyudukce cemberler
-       yana kayiyor ve sabit "tepedeki ustte, gerisi altta" kurali ust uste
-       biniyordu. Tek kategori halinde yon yok, tepeye yaziliyor. */
+    /* The label goes OUTSIDE the circle, pointing away from the centre: as N grows the
+       circles shift sideways, and the fixed "top one above, the rest below" rule caused
+       overlaps. With a single category there is no direction, so it goes on top. */
     CENTRES.forEach(function (c, i) {
       var n = shown().filter(function (f) { return (f.categories || []).indexOf(CATS[i]) > -1; }).length;
       var len = Math.hypot(c.x, c.y) || 1;
@@ -540,20 +541,20 @@
         + esc(META.categories[CATS[i]].label) + ' <tspan class="count">' + n + '</tspan></text>');
     });
 
-    /* Once BUTUN diskler paketlenip toplaniyor, sonra bir kez gevsetiliyor:
-       gevsetme bolgeler ARASI ust uste binmeyi de cozmek zorunda, tek tek
-       bolge icinde calissa komsu bolgenin diskini gormezdi. */
-    var tumDiskler = [];
+    /* First ALL discs are packed and collected, then relaxed once: the relaxation
+       must also resolve overlaps BETWEEN regions; run per region, it
+       would never see the discs of a neighbouring region. */
+    var allDiscs = [];
     regions().forEach(function (region) {
       var members = shown().filter(function (f) { return same(indexSet(f), region.sets); })
         .map(function (f) { return { f: f, r: RADIUS[f.effort] || 18 }; })
         .sort(function (a, b) { return b.r - a.r || (a.f.id < b.f.id ? -1 : 1); });
       pack(members, region.anchor);
-      members.forEach(function (m) { tumDiskler.push(m); });
+      members.forEach(function (m) { allDiscs.push(m); });
     });
-    relax(tumDiskler);
+    relax(allDiscs);
 
-    tumDiskler.forEach(function (m) {
+    allDiscs.forEach(function (m) {
       var p = PRIORITY[m.f.priority] || PRIORITY.medium;
       var font = m.r >= 26 ? 13 : m.r >= 20 ? 12 : 11;
       svg.push('<g class="disc" data-id="' + esc(m.f.id) + '" tabindex="0" role="button" aria-label="'
@@ -702,7 +703,7 @@
     var box = document.getElementById('filters');
     var btn = document.getElementById('toggle-fixed');
     var note = document.getElementById('fixed-note');
-    if (!FIXED_N) return;                      /* saklanacak bir sey yoksa dugme de yok */
+    if (!FIXED_N) return;                      /* nothing to hide, so no button either */
     box.hidden = false;
     function tazele() {
       btn.textContent = (showFixed ? 'Hide fixed' : 'Show fixed') + ' (' + FIXED_N + ')';
